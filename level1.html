@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 1 | Suba Creation</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      color: white;
+      background: linear-gradient(135deg, #170b2d, #3b155f, #811d66);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      padding: 32px 24px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+    }
+
+    .heart {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .brand {
+      color: #ffc0e8;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+    }
+
+    .level {
+      display: inline-block;
+      padding: 8px 18px;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      border-radius: 30px;
+      color: #ffd2ef;
+      font-size: 13px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .description {
+      color: #eadcf5;
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .players {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .player {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      overflow-wrap: anywhere;
+    }
+
+    .player span {
+      display: block;
+      font-size: 12px;
+      color: #e7c5fa;
+      margin-bottom: 7px;
+    }
+
+    .player strong {
+      font-size: 15px;
+    }
+
+    .heart-small {
+      font-size: 22px;
+    }
+
+    .rules {
+      padding: 16px;
+      margin: 22px 0;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 15px;
+      color: #f6eafa;
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .start-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #ff78c8, #c58aff);
+      color: #251033;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .start-btn:active {
+      transform: scale(0.98);
+    }
+
+    .note {
+      margin-top: 16px;
+      color: #d8c3e8;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <div class="heart">💗</div>
+
+    <p class="brand">SUBA CREATION</p>
+
+    <span class="level">LEVEL 01</span>
+
+    <h1>Partner Chemistry</h1>
+
+    <p class="description">
+      Let's discover how well you know each other!
+      Get ready for your first challenge.
+    </p>
+
+    <div class="players">
+      <div class="player">
+        <span>PLAYER 1</span>
+        <strong id="player1">Player 1</strong>
+      </div>
+
+      <div class="heart-small">💕</div>
+
+      <div class="player">
+        <span>PLAYER 2</span>
+        <strong id="player2">Player 2</strong>
+      </div>
+    </div>
+
+    <div class="rules">
+      ⏱️ Each question: <strong>30 seconds</strong><br>
+      💭 Choose your own answer<br>
+      💕 Discover your partner's choices<br>
+      🏆 Complete the level together
+    </div>
+
+    <a href="#" class="start-btn" id="startButton">
+      Start Level 1 💖
+    </a>
+
+    <p class="note">
+      A little game to discover a little more about each other.
+    </p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const roomCode = params.get("room");
+    const name1 = params.get("name1") || "Player 1";
+    const name2 = params.get("name2") || "Player 2";
+
+    document.getElementById("player1").textContent = name1;
+    document.getElementById("player2").textContent = name2;
+
+    document.getElementById("startButton").addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const nextParams = new URLSearchParams();
+
+      if (roomCode) nextParams.set("room", roomCode);
+      nextParams.set("name1", name1);
+      nextParams.set("name2", name2);
+
+      window.location.href =
+        "question1.html?" + nextParams.toString();
+    });
+  </script>
+</body>
+</html>

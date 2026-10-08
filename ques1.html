@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Chemistry | Suba Creation</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;padding:20px 14px;display:flex;
+  justify-content:center;align-items:center;
+  font-family:Arial,sans-serif;color:white;
+  background:linear-gradient(135deg,#160b2e,#45165f,#a83279)
+}
+.card{
+  width:100%;max-width:490px;padding:26px 20px;
+  border:1px solid #ffffff35;border-radius:24px;
+  background:#ffffff13;backdrop-filter:blur(12px);
+  box-shadow:0 15px 45px #00000035
+}
+.brand{text-align:center;color:#ffd3e9;font-size:12px;
+  letter-spacing:2px;margin-bottom:10px}
+h1{text-align:center;font-size:25px;margin-bottom:8px}
+.subtitle{text-align:center;color:#f4dcef;font-size:14px;margin-bottom:22px}
+.badge{text-align:center;color:#ffd4e9;font-size:13px;margin-bottom:12px}
+.timer{text-align:center;font-size:34px;font-weight:bold;
+  color:#ffda8a;margin-bottom:18px}
+.question{text-align:center;font-size:20px;line-height:1.5;margin-bottom:20px}
+.options{display:grid;gap:11px}
+.option{
+  width:100%;padding:14px;border:1px solid #ffffff45;
+  border-radius:13px;background:#ffffff12;color:white;
+  font-size:15px;text-align:left;cursor:pointer
+}
+.option.selected{background:#f5a6d3;color:#30102f;border-color:#ffd7ed}
+.option:disabled{cursor:default;opacity:.8}
+.status{text-align:center;min-height:45px;line-height:1.5;
+  margin-top:17px;color:#ffe0ef;font-size:14px}
+.btn{
+  width:100%;padding:14px;margin-top:12px;border:0;
+  border-radius:13px;background:#ffd1e8;color:#381139;
+  font-weight:bold;font-size:16px;cursor:pointer
+}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.hidden{display:none}
+.score{text-align:center;font-size:42px;font-weight:bold;color:#ffd1e8;margin:20px}
+.note{text-align:center;margin-top:15px;color:#e9d9ed;font-size:12px;line-height:1.5}
+</style>
+</head>
+
+<body>
+<main class="card">
+  <p class="brand">SUBA CREATION</p>
+  <h1>💗 Partner Chemistry</h1>
+  <p class="subtitle">A Journey For Two</p>
+
+  <section id="game">
+    <p class="badge" id="role">Connecting to your room...</p>
+    <p class="badge" id="progress">QUESTION 1 OF 5</p>
+    <div class="timer" id="timer">30</div>
+    <h2 class="question" id="question">Loading question...</h2>
+    <div class="options" id="options"></div>
+    <p class="status" id="status">Please wait 💗</p>
+    <button class="btn" id="submit" disabled>Submit Answer 💕</button>
+  </section>
+
+  <section id="result" class="hidden">
+    <h2 class="question">Level 1 Completed! 🎉</h2>
+    <div class="score" id="score">0%</div>
+    <p class="status" id="resultText"></p>
+    <button class="btn" onclick="location.href='index.html'">Back to Welcome</button>
+  </section>
+
+  <p class="note">Guess your partner's favourite answer 💌</p>
+</main>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {
+  getAuth, signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import {
+  getDatabase, ref, get, set, update, onValue, runTransaction
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD60gF88SJDOSopSox5mNVvmdOiy9aMKCg",
+  authDomain: "partner-s-chemestry.firebaseapp.com",
+  databaseURL: "https://partner-s-chemestry-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "partner-s-chemestry",
+  storageBucket: "partner-s-chemestry.firebasestorage.app",
+  messagingSenderId: "372815828546",
+  appId: "1:372815828546:web:67f014e84b054d5a5cbfdb",
+  measurementId: "G-KMQBJRNTPQ"
+};
+
+const questions = [
+  {
+    question:"What would make your partner happiest?",
+    options:["A surprise gift 🎁","Quality time together 💗","A sweet message 💌","A long phone call 📞"]
+  },
+  {
+    question:"What would your partner choose for a date?",
+    options:["Beach walk 🌊","Movie night 🎬","Dinner together 🍽️","Adventure trip 🌍"]
+  },
+  {
+    question:"When your partner feels sad, what helps most?",
+    options:["A warm hug 🫂","Listening patiently 💕","Making them laugh 😂","Giving them some space 🌷"]
+  },
+  {
+    question:"Which gift would your partner prefer?",
+    options:["A handwritten letter 💌","A favourite snack 🍫","A cute photo album 📸","A surprise outing 🎉"]
+  },
+  {
+    question:"What matters most to your partner?",
+    options:["Trust 🤝","Communication 💬","Loyalty ❤️","Understanding 🫶"]
+  }
+];
+
+const params = new URLSearchParams(location.search);
+const roomCode = (params.get("room") || "").trim().toUpperCase();
+
+const $ = id => document.getElementById(id);
+let db, uid, playerNumber, currentQuestion = 0;
+let selectedAnswer = "";
+let submitted = false;
+let timerInterval = null;
+let unsubscribe = null;
+let roomData = null;
+let advancing = false;
+let localDeadline = 0;
+
+function message(text) {
+  $("status").textContent = text;
+}
+
+function escapeRoomCode(code) {
+  return code.replace(/[^A-Z0-9_-]/g, "");
+}
+
+function renderQuestion() {
+  clearInterval(timerInterval);
+  selectedAnswer = "";
+  submitted = false;
+  $("submit").disabled = true;
+  $("options").innerHTML = "";
+  $("question").textContent = questions[currentQuestion].question;
+  $("progress").textContent =
+    `QUESTION ${currentQuestion + 1} OF ${questions.length}`;
+
+  questions[currentQuestion].options.forEach(answer => {
+    const button = document.createElement("button");
+    button.className = "option";
+    button.textContent = answer;
+    button.addEventListener("click", () => {
+      if (submitted || roomData?.game?.phase !== "answering") return;
+      selectedAnswer = answer;
+      document.querySelectorAll(".option").forEach(b => {
+        b.classList.toggle("selected", b === button);
+      });
+      $("submit").disabled = false;
+    });
+    $("options").appendChild(button);
+  });
+
+  message(playerNumber === 1
+    ? "Choose YOUR favourite answer 💗"
+    : "Guess what Player 1 chose 💌");
+
+  startLocalTimer();
+}
+
+function startLocalTimer() {
+  clearInterval(timerInterval);
+  const questionData = roomData?.game?.questions?.[currentQuestion];
+  if (!questionData?.startedAt) return;
+
+  // Both phones calculate time from the same Firebase start timestamp.
+  localDeadline = questionData.startedAt + 30000;
+
+  const tick = () => {
+    const remaining = Math.max(0, Math.ceil((localDeadline - Date.now()) / 1000));
+    $("timer").textContent = remaining;
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      if (!submitted) {
+        $("submit").disabled = true;
+        document.querySelectorAll(".option").forEach(b => b.disabled = true);
+        message("Time is up! Waiting for the other player 💗");
+        submitAnswer(true).catch(showError);
+      }
+    }
+  };
+
+  tick();
+  timerInterval = setInterval(tick, 250);
+}
+
+async function submitAnswer(timedOut = false) {
+  if (submitted) return;
+  submitted = true;
+  $("submit").disabled = true;
+  document.querySelectorAll(".option").forEach(b => b.disabled = true);
+
+  const answer = timedOut ? "__TIMEOUT__" : selectedAnswer;
+  if (!answer) {
+    submitted = false;
+    message("Choose an answer first 💗");
+    return;
+  }
+
+  const answerRef = ref(db,
+    `rooms/${roomCode}/game/questions/${currentQuestion}/answers/${uid}`);
+
+  await set(answerRef, {
+    answer,
+    playerNumber,
+    submittedAt: Date.now()
+  });
+
+  message("Answer saved 💗 Waiting for your partner...");
+}
+
+$("submit").addEventListener("click", () => {
+  submitAnswer(false).catch(showError);
+});
+
+function showError(error) {
+  console.error(error);
+  message("Error: " + (error?.message || "Please refresh and try again."));
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  $("game").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  let matches = 0;
+  let completed = 0;
+
+  for (let i = 0; i < questions.length; i++) {
+    const answers = roomData.game.questions[i]?.answers || {};
+    const entries = Object.values(answers);
+    const first = entries.find(a => a.playerNumber === 1);
+    const second = entries.find(a => a.playerNumber === 2);
+
+    if (first && second) {
+      completed++;
+      if (first.answer !== "__TIMEOUT__" &&
+          second.answer !== "__TIMEOUT__" &&
+          first.answer === second.answer) matches++;
+    }
+  }
+
+  const percentage = completed ? Math.round(matches / questions.length * 100) : 0;
+  $("score").textContent = percentage + "%";
+  $("resultText").textContent =
+    `${matches} matching answers out of ${questions.length}. Keep learning about each other! 💕`;
+}
+
+function maybeAdvance() {
+  if (!roomData || advancing || playerNumber !== 1) return;
+  const game = roomData.game;
+  const q = game?.questions?.[currentQuestion];
+  if (!q) return;
+
+  const answers = Object.values(q.answers || {});
+  const first = answers.some(a => a.playerNumber === 1);
+  const second = answers.some(a => a.playerNumber === 2);
+
+  if (first && second && game.phase === "answering") {
+    advancing = true;
+    const nextIndex = currentQuestion + 1;
+    const gameRef = ref(db, `rooms/${roomCode}/game`);
+
+    (async () => {
+      if (nextIndex >= questions.length) {
+        await update(gameRef, { phase: "completed" });
+      } else {
+        const now = Date.now();
+        await update(gameRef, {
+          currentQuestion: nextIndex,
+          phase: "answering",
+          [`questions/${nextIndex}/startedAt`]: now
+        });
+      }
+    })().catch(showError).finally(() => {
+      advancing = false;
+    });
+  }
+}
+
+function syncFromFirebase(data) {
+  roomData = data;
+  if (!data?.game) return;
+
+  const game = data.game;
+
+  if (game.phase === "completed") {
+    showResults();
+    return;
+  }
+
+  const nextQuestion = Number(game.currentQuestion || 0);
+  if (nextQuestion !== currentQuestion) {
+    currentQuestion = nextQuestion;
+    renderQuestion();
+  } else {
+    const q = game.questions?.[currentQuestion];
+    if (q?.startedAt && !timerInterval) startLocalTimer();
+
+    const answers = Object.values(q?.answers || {});
+    const bothAnswered = answers.some(a => a.playerNumber === 1) &&
+                         answers.some(a => a.playerNumber === 2);
+
+    if (bothAnswered) {
+      message("Both answers submitted! Moving to next question 💕");
+      maybeAdvance();
+    } else if (answers.some(a => a.playerNumber !== playerNumber)) {
+      message("Partner answered! Your turn 💗");
+    }
+  }
+}
+
+async function initializeGame() {
+  if (!roomCode) {
+    message("Room code missing. Return to Connect Your Partner and join again.");
+    return;
+  }
+
+  $("role").textContent = "Connecting to room " + roomCode + "...";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  db = getDatabase(app);
+
+  const credentials = await signInAnonymously(auth);
+  uid = credentials.user.uid;
+
+  const roomRef = ref(db, `rooms/${escapeRoomCode(roomCode)}`);
+  const snapshot = await get(roomRef);
+
+  if (!snapshot.exists()) throw new Error("Room not found. Create or join a new room.");
+
+  const room = snapshot.val();
+  const players = Object.entries(room.players || {})
+    .map(([id, player]) => ({ id, ...player }))
+    .sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+
+  if (players.length < 2) {
+    throw new Error("Waiting for your partner to join this room.");
+  }
+
+  playerNumber = players.findIndex(p => p.id === uid) + 1;
+
+  if (playerNumber === 0) {
+    throw new Error("Your phone is not registered in this room. Join through Connect Your Partner first.");
+  }
+
+  $("role").textContent = playerNumber === 1
+    ? "PLAYER 1 · Choose your favourite 💗"
+    : "PLAYER 2 · Guess your partner 💌";
+
+  const gameRef = ref(db, `rooms/${roomCode}/game`);
+
+  if (playerNumber === 1) {
+    await runTransaction(gameRef, current => {
+      if (current) return current;
+      const now = Date.now();
+      return {
+        currentQuestion: 0,
+        phase: "answering",
+        questions: {
+          0: { startedAt: now, answers: {} }
+        }
+      };
+    });
+  }
+
+  unsubscribe = onValue(gameRef, snap => {
+    if (!snap.exists()) {
+      message("Preparing the game...");
+      return;
+    }
+    syncFromFirebase({ game: snap.val() });
+  });
+
+  message("Connected! 💗");
+} 
+
+initializeGame().catch(showError);
+</script>
+</body>
