@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#190f1c">
+  <title>Suba Creation | A Journey For Two</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+</head>
+
+<body>
+  <main class="app-screen">
+
+    <header class="app-header">
+      <div class="logo-heart">♡</div>
+      <p class="brand-name">Suba Creation</p>
+      <p class="brand-subtitle">A JOURNEY FOR TWO</p>
+    </header>
+
+    <section class="hero">
+      <div class="heart-art" aria-hidden="true">
+        <span>♡</span>
+        <strong>♥</strong>
+        <span>♡</span>
+      </div>
+
+      <p class="eyebrow">YOUR STORY STARTS HERE</p>
+      <h1>Two Hearts.<br><span>One Journey.</span></h1>
+
+      <p class="hero-text">
+        Discover how well you know<br>
+        the person closest to your heart.
+      </p>
+
+      <div class="love-line">
+        <span></span>
+        MADE FOR TWO
+        <span></span>
+      </div>
+    </section>
+
+    <section class="connect-card">
+      <div class="card-heading">
+        <div class="mini-heart">♡</div>
+        <h2>Connect Your Partner</h2>
+        <p>Two phones, one beautiful journey.</p>
+      </div>
+
+      <label for="yourName">YOUR NAME</label>
+      <input
+        type="text"
+        id="yourName"
+        placeholder="Enter your name"
+        maxlength="40"
+        autocomplete="name"
+        required
+      >
+
+      <button type="button" id="createRoomBtn" class="btn btn-primary">
+        <span>♡</span>
+        Create a Room
+        <span class="arrow">→</span>
+      </button>
+
+      <div class="divider-text">
+        <span>OR JOIN YOUR PARTNER</span>
+      </div>
+
+      <label for="roomCode">PARTNER'S ROOM CODE</label>
+      <input
+        type="text"
+        id="roomCode"
+        placeholder="Enter 6-character code"
+        maxlength="6"
+        autocomplete="off"
+      >
+
+      <button type="button" id="joinRoomBtn" class="btn btn-secondary">
+        Join Room <span class="arrow">→</span>
+      </button>
+
+      <div id="roomPanel" class="room-panel" hidden>
+        <p class="room-label">YOUR ROOM CODE</p>
+        <div id="generatedCode" class="generated-code">------</div>
+
+        <p class="room-description">
+          Share this code with your partner 💌
+        </p>
+
+        <button type="button" id="shareCodeBtn" class="btn btn-primary">
+          ↗ Share Code
+        </button>
+
+        <button type="button" id="continueBtn" class="btn btn-secondary">
+          Continue to Register ♡
+        </button>
+      </div>
+
+      <p id="statusMessage" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <footer class="app-footer">
+      <p>Made with <span>♥</span> by Suba Creation</p>
+      <small>A little game for two hearts.</small>
+    </footer>
+
+  </main>
+
+  <script>
+    // YOUR FIREBASE CONFIGURATION
+    const firebaseConfig = {
+      apiKey: "AIzaSyD60gF88SJDOSopSox5mNVvmdOiy9aMKCg",
+      authDomain: "partner-s-chemestry.firebaseapp.com",
+      databaseURL: "https://partner-s-chemestry-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "partner-s-chemestry",
+      storageBucket: "partner-s-chemestry.firebasestorage.app",
+      messagingSenderId: "372815828546",
+      appId: "1:372815828546:web:67f014e84b054d5a5cbfdb",
+      measurementId: "G-KMQBJRNTPQ"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    const nameInput = document.getElementById("yourName");
+    const roomInput = document.getElementById("roomCode");
+    const roomPanel = document.getElementById("roomPanel");
+    const generatedCode = document.getElementById("generatedCode");
+    const statusMessage = document.getElementById("statusMessage");
+
+    const createBtn = document.getElementById("createRoomBtn");
+    const joinBtn = document.getElementById("joinRoomBtn");
+    const shareBtn = document.getElementById("shareCodeBtn");
+    const continueBtn = document.getElementById("continueBtn");
+
+    let currentRoomCode = "";
+
+    function showMessage(message, error = false) {
+      statusMessage.textContent = message;
+      statusMessage.classList.toggle("error", error);
+    }
+
+    function generateRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+
+      for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+
+      return code;
+    }
+
+    async function ensureSignedIn() {
+      if (!auth.currentUser) {
+        await auth.signInAnonymously();
+      }
+
+      return auth.currentUser;
+    }
+
+    function showRoom(code) {
+      currentRoomCode = code;
+      generatedCode.textContent = code;
+      roomPanel.hidden = false;
+
+      roomPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+    }
+
+    // CREATE ROOM IN FIREBASE
+    createBtn.addEventListener("click", async () => {
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        showMessage("Please enter your name first ♡", true);
+        nameInput.focus();
+        return;
+      }
+
+      createBtn.disabled = true;
+      showMessage("Creating your room... 💗");
+
+      try {
+        const user = await ensureSignedIn();
+        let created = false;
+        let code = "";
+
+        for (let attempt = 0; attempt < 5; attempt++) {
+          code = generateRoomCode();
+
+          const roomRef = db.ref("rooms/" + code);
+
+          const result = await roomRef.transaction(current => {
+            if (current !== null) return;
+
+            return {
+              createdAt: firebase.database.ServerValue.TIMESTAMP,
+              status: "waiting",
+              players: {
+                host: {
+                  uid: user.uid,
+                  name: name,
+                  joinedAt: firebase.database.ServerValue.TIMESTAMP
+                }
+              }
+            };
+          });
+
+          if (result.committed) {
+            created = true;
+            break;
+          }
+        }
+
+        if (!created) {
+          throw new Error("Could not create a room. Please try again.");
+        }
+
+        sessionStorage.setItem("yourName", name);
+        sessionStorage.setItem("roomCode", code);
+        sessionStorage.setItem("roomRole", "host");
+
+        showRoom(code);
+        showMessage("Room created! Share this code with your partner 💗");
+
+      } catch (error) {
+        console.error(error);
+        showMessage(
+          "Room creation failed. Check Firebase Rules and internet connection.",
+          true
+        );
+      } finally {
+        createBtn.disabled = false;
+      }
+    });
+
+    // JOIN AN EXISTING ROOM
+    joinBtn.addEventListener("click", async () => {
+      const name = nameInput.value.trim();
+      const code = roomInput.value.trim().toUpperCase();
+
+      if (!name) {
+        showMessage("Please enter your name first ♡", true);
+        nameInput.focus();
+        return;
+      }
+
+      if (!/^[A-Z0-9]{6}$/.test(code)) {
+        showMessage("Enter your partner's 6-character code.", true);
+        roomInput.focus();
+        return;
+      }
+
+      joinBtn.disabled = true;
+      showMessage("Connecting to your partner... 💗");
+
+      try {
+        const user = await ensureSignedIn();
+        const roomRef = db.ref("rooms/" + code);
+        const snapshot = await roomRef.once("value");
+
+        if (!snapshot.exists()) {
+          throw new Error("Room not found. Check the code and try again.");
+        }
+
+        const existingRoom = snapshot.val();
+
+        if (
+          existingRoom.players?.host?.uid === user.uid
+        ) {
+          throw new Error("Use your partner's phone to join this room.");
+        }
+
+        if (
+          existingRoom.players?.partner &&
+          existingRoom.players.partner.uid !== user.uid
+        ) {
+          throw new Error("This room already has two players.");
+        }
+
+        const result = await roomRef.transaction(current => {
+          if (!current || !current.players?.host) return;
+
+          if (
+            current.players.partner &&
+            current.players.partner.uid !== user.uid
+          ) {
+            return;
+          }
+
+          current.players.partner = {
+            uid: user.uid,
+            name: name,
+            joinedAt: firebase.database.ServerValue.TIMESTAMP
+          };
+
+          current.status = "connected";
+          return current;
+        });
+
+        if (!result.committed) {
+          throw new Error("Could not join. This room may already be full.");
+        }
+
+        sessionStorage.setItem("yourName", name);
+        sessionStorage.setItem("roomCode", code);
+        sessionStorage.setItem("roomRole", "partner");
+
+        showRoom(code);
+        showMessage("Connected to the room! Continue to Register ♡");
+
+      } catch (error) {
+        console.error(error);
+        showMessage(error.message || "Could not connect to the room.", true);
+      } finally {
+        joinBtn.disabled = false;
+      }
+    });
+
+    // SHARE ROOM CODE
+    shareBtn.addEventListener("click", async () => {
+      if (!currentRoomCode) {
+        showMessage("Create a room first.", true);
+        return;
+      }
+
+      const message =
+        "Let's play Suba Creation together! ❤️\n" +
+        "Room Code: " + currentRoomCode +
+        "\nOpen the game website and enter this code. 💗";
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "Join my Suba Creation room",
+            text: message
+          });
+        } else {
+          await navigator.clipboard.writeText(message);
+          showMessage("Message copied! Send it to your partner 💌");
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          showMessage("Share this code: " + currentRoomCode);
+        }
+      }
+    });
+
+    // CONTINUE TO REGISTER
+    continueBtn.addEventListener("click", () => {
+      const name = sessionStorage.getItem("yourName");
+      const code = sessionStorage.getItem("roomCode");
+
+      if (!name || !code) {
+        showMessage("Create or join a room first.", true);
+        return;
+      }
+
+      window.location.href = "register.html";
+    });
+
+    // CAPITALIZE ROOM CODE
+    roomInput.addEventListener("input", () => {
+      roomInput.value = roomInput.value
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+    });
+
+    // SIGN IN WITH FIREBASE ANONYMOUS AUTH
+    auth.signInAnonymously().catch(error => {
+      console.error(error);
+      showMessage(
+        "Firebase sign-in failed. Check Authentication settings.",
+        true
+      );
+    });
+  </script>
+</body>
+</html>

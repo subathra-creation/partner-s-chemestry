@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 1 | Suba Creation</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;padding:25px 15px;
+  font-family:Arial,sans-serif;color:#fff;
+  background:linear-gradient(135deg,#170d21,#36172f,#160e22);
+}
+.container{max-width:650px;margin:auto}
+header{text-align:center;margin-bottom:25px}
+.small{color:#e9a6ca;letter-spacing:3px;font-size:12px}
+h1{font-size:clamp(27px,6vw,38px);margin:12px 0}
+.subtitle{color:#dfcbdc;line-height:1.6}
+.card{
+  background:#ffffff0c;border:1px solid #ffffff20;
+  border-radius:20px;padding:22px;margin-bottom:18px;
+}
+h2{font-size:21px;margin-top:0}
+.field{margin:14px 0}
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:13px;margin:9px 0;border:1px solid #ffffff24;
+  border-radius:12px;cursor:pointer;background:#ffffff05;
+}
+.option:has(input:checked){
+  border-color:#ee91c5;background:#e879a920;
+}
+input[type=radio]{accent-color:#ed91c5;width:17px;height:17px}
+button{
+  width:100%;padding:14px;border:0;border-radius:12px;
+  background:linear-gradient(90deg,#e879a9,#c084fc);
+  color:#261326;font-size:16px;font-weight:bold;cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.status{color:#f4c5e1;text-align:center;line-height:1.6}
+.timer{text-align:center;font-size:25px;font-weight:bold;color:#f5acd2}
+.progress{text-align:center;color:#e8cfe2;font-size:13px;margin-bottom:18px}
+.hidden{display:none!important}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <header>
+    <div class="small">SUBA CREATION ❤️</div>
+    <h1>A Journey For Two</h1>
+    <div class="subtitle">Level 1 · Do You Really Know Me?</div>
+  </header>
+
+  <div class="card">
+    <h2 id="phaseTitle">Welcome 💗</h2>
+    <p class="subtitle" id="instructions">
+      Connect your partner and get ready to play!
+    </p>
+    <div class="status" id="status">Connecting to Firebase...</div>
+    <div class="timer" id="timer"></div>
+  </div>
+
+  <div id="gameArea" class="hidden">
+    <div class="progress" id="progress"></div>
+    <form id="answerForm">
+      <div id="questions"></div>
+      <button type="submit" id="submitBtn">Submit Answers ❤️</button>
+    </form>
+  </div>
+
+  <div id="result" class="card hidden">
+    <h2>Our Level 1 Result 💕</h2>
+    <p id="scoreText"></p>
+    <p class="subtitle" id="resultDetails"></p>
+    <button onclick="location.href='level2.html'">Next Level →</button>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD60gF88SJDOSopSox5mNVvmdOiy9aMKCg",
+  authDomain: "partner-s-chemestry.firebaseapp.com",
+  databaseURL: "https://partner-s-chemestry-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "partner-s-chemestry",
+  storageBucket: "partner-s-chemestry.firebasestorage.app",
+  messagingSenderId: "372815828546",
+  appId: "1:372815828546:web:67f014e84b054d5a5cbfdb",
+  measurementId: "G-KMQBJRNTPQ"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+const questions = [
+  {q:"What is my favourite food?", options:["Biryani","Dosa","Pizza","Fried Rice"]},
+  {q:"What is my favourite colour?", options:["Black","Blue","Pink","Purple"]},
+  {q:"How do I love spending my free time?", options:["Listening to music","Watching movies","Sleeping","Talking with my partner"]},
+  {q:"What makes me the happiest?", options:["Getting gifts","Time with loved ones","Going out","Getting praised"]},
+  {q:"What is my dream destination?", options:["Beach","Hill station","Bangalore","Abroad"]},
+  {q:"What gift do I love most?", options:["Flowers","Chocolates","Teddy bear","Handwritten letter"]},
+  {q:"What do I usually do when I feel sad?", options:["Stay quiet","Cry","Listen to music","Talk to someone I trust"]},
+  {q:"What matters most to me in a relationship?", options:["Trust","Love and care","Time together","Honesty"]},
+  {q:"What is my favourite type of date?", options:["Beach walk","Dinner together","Watching a movie","A long conversation"]},
+  {q:"What is my biggest dream?", options:["Successful career","Happy family","Travel the world","Peaceful, happy life"]}
+];
+
+const roomCode = sessionStorage.getItem("roomCode");
+const role = sessionStorage.getItem("roomRole");
+const myName = sessionStorage.getItem("yourName") || "Player";
+
+let roomRef, levelRef, partnerRole, partnerName = "your partner";
+let roomData = null, mode = "own", selectedAnswers = {};
+let submitted = false, countdownHandle = null;
+
+const $ = id => document.getElementById(id);
+
+function showStatus(message) {
+  $("status").textContent = message;
+}
+
+function renderQuestions() {
+  $("questions").innerHTML = "";
+  $("progress").textContent =
+    mode === "own"
+    ? "Choose your own favourite answers secretly · 10 questions"
+    : "Guess " + partnerName + "'s answers · 10 questions";
+
+  $("phaseTitle").textContent =
+    mode === "own" ? "Choose Your Favourites 💗" :
+    "What Does " + partnerName + " Like? ❤️";
+
+  $("instructions").textContent =
+    mode === "own"
+    ? "Select your real answers. Your partner cannot see them."
+    : "Choose what you think your partner selected. Answers stay hidden until both finish.";
+
+  questions.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h2");
+    title.textContent = (i + 1) + ". " +
+      (mode === "guess" ? item.q.replace("my", partnerName + "'s").replace("I ", partnerName + " ") : item.q);
+    card.appendChild(title);
+
+    item.options.forEach((option, j) => {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "q" + i;
+      radio.value = String(j);
+      radio.required = j === 0;
+      radio.checked = selectedAnswers[i] === j;
+
+      radio.addEventListener("change", () => {
+        selectedAnswers[i] = j;
+      });
+
+      const text = document.createElement("span");
+      text.textContent = option;
+
+      label.appendChild(radio);
+      label.appendChild(text);
+      card.appendChild(label);
+    });
+
+    $("questions").appendChild(card);
+  });
+
+  $("gameArea").classList.remove("hidden");
+}
+
+function startSharedTimer(startAt) {
+  if (countdownHandle) clearInterval(countdownHandle);
+
+  function update() {
+    const remaining = Math.max(0, Math.ceil((startAt - Date.now()) / 1000));
+    $("timer").textContent = remaining > 0 ? "Starts in " + remaining + "..." : "Your time starts now! ❤️";
+    if (remaining <= 0) {
+      clearInterval(countdownHandle);
+      $("timer").textContent = "Answer together 💗";
+    }
+  }
+
+  update();
+  countdownHandle = setInterval(update, 250);
+}
+
+function enterGuessMode() {
+  if (mode === "guess" || submitted) return;
+
+  mode = "guess";
+  selectedAnswers = {};
+  submitted = false;
+  renderQuestions();
+  $("submitBtn").disabled = false;
+  showStatus("Both favourites are saved! Guess each other's answers.");
+  const startAt = roomData.level1.startAt;
+  if (startAt) startSharedTimer(startAt);
+}
+
+function displayResults(data) {
+  const answers = data.answers || {};
+  const guesses = data.guesses || {};
+
+  if (!answers.host || !answers.partner ||
+      !guesses.host || !guesses.partner) return;
+
+  $("gameArea").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("timer").textContent = "";
+
+  let myCorrect = 0;
+  let partnerCorrect = 0;
+
+  // Host guesses partner; partner guesses host.
+  const myGuesses = guesses[role] || {};
+  const partnerGuesses = guesses[partnerRole] || {};
+  const partnerAnswers = answers[partnerRole] || {};
+  const myAnswers = answers[role] || {};
+
+  for (let i = 0; i < 10; i++) {
+    if (Number(myGuesses[i]) === Number(partnerAnswers[i])) myCorrect++;
+    if (Number(partnerGuesses[i]) === Number(myAnswers[i])) partnerCorrect++;
+  }
+
+  const myScore = myCorrect * 2.5;
+  const partnerScore = partnerCorrect * 2.5;
+
+  $("scoreText").textContent =
+    myName + ": " + myCorrect + "/10 (" + myScore + "% of total game)";
+
+  $("resultDetails").textContent =
+    "Your partner's score: " + partnerCorrect + "/10 (" +
+    partnerScore + "% of total game). Level 1 maximum contribution: 25%.";
+  showStatus("Both players have finished! ❤️");
+}
+
+function handleRoom(data) {
+  roomData = data;
+  if (!data || !data.players || !data.players[role]) {
+    showStatus("Room/player details not found. Return to Connect Your Partner.");
+    return;
+  }
+
+  const partner = data.players[partnerRole];
+  partnerName = partner && partner.name ? partner.name : "your partner";
+
+  if (partner) {
+    if (data.level1 && data.level1.answers &&
+        data.level1.answers.host && data.level1.answers.partner) {
+      if (!data.level1.guesses || !data.level1.guesses[role]) {
+        enterGuessMode();
+      }
+      if (data.level1.startAt) startSharedTimer(data.level1.startAt);
+      displayResults(data.level1);
+    } else {
+      showStatus("Partner connected: " + partnerName +
+        ". Both of you must submit your favourite answers first.");
+    }
+  } else {
+    showStatus("Waiting for your partner to connect to room " +
+      roomCode + ". Ask them to enter the same room code.");
+  }
+}
+
+$("answerForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!levelRef || !roomData) return;
+  if (Object.keys(selectedAnswers).length !== 10) {
+    showStatus("Please answer all 10 questions first.");
+    return;
+  }
+
+  $("submitBtn").disabled = true;
+
+  try {
+    if (mode === "own") {
+      await levelRef.child("answers/" + role).set(selectedAnswers);
+      showStatus("Your answers are saved secretly. Waiting for your partner...");
+
+      // Start only when both people have saved their own answers.
+      const snap = await levelRef.child("answers").once("value");
+      const answers = snap.val();
+
+      if (answers && answers.host && answers.partner) {
+        await levelRef.child("startAt").transaction(current =>
+          current === null ? Date.now() + 5000 : current
+        );
+      }
+    } else {
+      await levelRef.child("guesses/" + role).set(selectedAnswers);
+      showStatus("Your guesses are saved! Waiting for your partner to finish...");
+    }
+  } catch (error) {
+    console.error(error);
+    showStatus("Could not save answers: " + error.message);
+    $("submitBtn").disabled = false;
+  }
+});
+
+async function init() {
+  if (!roomCode || !role || !["host", "partner"].includes(role)) {
+    showStatus("Room details missing. Go back and connect to your partner first.");
+    return;
+  }
+
+  partnerRole = role === "host" ? "partner" : "host";
+  roomRef = db.ref("rooms/" + roomCode);
+  levelRef = roomRef.child("level1");
+
+  try {
+    if (!auth.currentUser) await auth.signInAnonymously();
+
+    roomRef.on("value", snapshot => {
+      const data = snapshot.val();
+      if (!data) {
+        showStatus("Room not found. Please create or join a room again.");
+        return;
+      }
+
+      handleRoom(data);
+
+      const level = data.level1 || {};
+      if (level.answers && level.answers.host && level.answers.partner) {
+        if (mode === "own") enterGuessMode();
+        if (level.startAt) startSharedTimer(level.startAt);
+
+        if (level.guesses && level.guesses[role]) {
+          submitted = true;
+          $("submitBtn").disabled = true;
+          showStatus("Your guesses are saved. Waiting for your partner...");
+        }
+
+        displayResults(level);
+      }
+    }, error => showStatus("Firebase error: " + error.message));
+
+  } catch (error) {
+    showStatus("Firebase sign-in failed: " + error.message);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
