@@ -388,6 +388,45 @@
       window.location.href = "register.html";
     });
 
+    // AUTOMATICALLY GO TO REGISTER WHEN BOTH PLAYERS CONNECT
+    let registerRedirected = false;
+
+    function watchForPartner() {
+      const code = sessionStorage.getItem("roomCode");
+      const role = sessionStorage.getItem("roomRole");
+
+      if (!code || !role || !["host", "partner"].includes(role)) {
+        return;
+      }
+
+      db.ref("rooms/" + code + "/players").on("value", snapshot => {
+        const players = snapshot.val();
+
+        if (
+          players &&
+          players.host &&
+          players.partner &&
+          !registerRedirected
+        ) {
+          registerRedirected = true;
+
+          sessionStorage.setItem("yourName", 
+            sessionStorage.getItem("yourName") || "");
+
+          showMessage("Both partners connected! Opening Register page ❤️");
+
+          setTimeout(() => {
+            window.location.href = "register.html";
+          }, 1000);
+        }
+      }, error => {
+        console.error("Partner connection listener:", error);
+      });
+    }
+
+    // Start watching when this page loads
+    watchForPartner();
+
     // FORMAT ROOM CODE
     roomInput.addEventListener("input", () => {
       roomInput.value = roomInput.value
