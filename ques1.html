@@ -17,55 +17,75 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#190f1c;--card:#2b1b2b;--pink:#f3a5c5;
-  --light:#ffd6e6;--text:#fff6f5;--muted:#c7b5c5;
-  --border:#f3a5c53b
+  --bg:#190f1c;
+  --card:#2b1b2b;
+  --pink:#f3a5c5;
+  --light:#ffd6e6;
+  --text:#fff6f5;
+  --muted:#c7b5c5;
+  --border:#f3a5c53b;
 }
 body{
   margin:0;min-height:100vh;padding:24px 14px 40px;
   font-family:"DM Sans",sans-serif;color:var(--text);
-  background:radial-gradient(circle at 15% 10%,#67325270,transparent 35%),
-  radial-gradient(circle at 90% 80%,#623d6660,transparent 35%),var(--bg)
+  background:
+  radial-gradient(circle at 15% 10%,#67325270,transparent 35%),
+  radial-gradient(circle at 90% 80%,#623d6660,transparent 35%),
+  var(--bg);
 }
 button{font:inherit}
 .container{width:100%;max-width:650px;margin:auto}
 header{text-align:center;margin-bottom:25px}
 .small{color:var(--pink);letter-spacing:3px;font-size:11px;font-weight:700}
-h1{font-family:"Playfair Display",serif;font-size:clamp(30px,7vw,43px);font-weight:500;margin:13px 0}
+h1{
+  font-family:"Playfair Display",serif;
+  font-size:clamp(30px,7vw,43px);
+  font-weight:500;margin:13px 0;
+}
 .subtitle{color:var(--muted);line-height:1.7;font-size:14px}
 .card{
-  background:#ffffff09;border:1px solid var(--border);border-radius:20px;
-  padding:21px;margin-bottom:17px;box-shadow:0 12px 35px #0003
+  background:#ffffff09;border:1px solid var(--border);
+  border-radius:20px;padding:21px;margin-bottom:17px;
+  box-shadow:0 12px 35px #0003;
 }
 h2{font-family:"Playfair Display",serif;font-size:22px;font-weight:500;margin-top:0}
 .status{text-align:center;color:var(--light);line-height:1.7;font-size:13px;overflow-wrap:anywhere}
-.timer{text-align:center;font-size:24px;font-weight:700;color:var(--pink);margin-top:12px}
 .steps{display:flex;gap:7px;margin:18px 0}
-.step{flex:1;text-align:center;padding:10px 3px;border:1px solid var(--border);border-radius:11px;color:var(--muted);font-size:10px}
+.step{
+  flex:1;text-align:center;padding:10px 3px;
+  border:1px solid var(--border);border-radius:11px;
+  color:var(--muted);font-size:10px;
+}
 .step.active{background:#e879a925;color:var(--light);border-color:var(--pink)}
 .progress{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
-.question-card{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:20px}
+.question-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:17px;padding:20px;
+}
 .question-card h2{font-size:20px;line-height:1.5}
 .option{
- display:flex;align-items:center;gap:11px;padding:14px;margin:10px 0;
- border:1px solid #ffffff20;border-radius:13px;cursor:pointer;background:#ffffff05
+  display:flex;align-items:center;gap:11px;padding:14px;
+  margin:10px 0;border:1px solid #ffffff20;border-radius:13px;
+  cursor:pointer;background:#ffffff05;
 }
 .option:has(input:checked){border-color:var(--pink);background:#e879a925}
 .option input{accent-color:#ed91c5;width:18px;height:18px;flex-shrink:0}
 .option span{font-size:14px;line-height:1.5}
 .main-btn{
- display:block;width:100%;padding:15px;margin-top:17px;border:0;border-radius:13px;
- color:#291522;background:linear-gradient(120deg,#ffd6e6,#ed9fc1);
- font-weight:700;font-size:15px;cursor:pointer
+  display:block;width:100%;padding:15px;margin-top:17px;
+  border:0;border-radius:13px;color:#291522;
+  background:linear-gradient(120deg,#ffd6e6,#ed9fc1);
+  font-weight:700;font-size:15px;cursor:pointer;
 }
 .secondary{background:#ffffff0d;color:var(--light);border:1px solid var(--border)}
 .main-btn:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none!important}
 .score-circle{
- width:155px;height:155px;border-radius:50%;margin:22px auto;
- display:flex;flex-direction:column;align-items:center;justify-content:center;
- border:3px solid #f3a5c57a;background:radial-gradient(circle,#873e674c,#2b1b2b);
- box-shadow:0 0 35px #ed91c52b
+  width:155px;height:155px;border-radius:50%;margin:22px auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:3px solid #f3a5c57a;
+  background:radial-gradient(circle,#873e674c,#2b1b2b);
+  box-shadow:0 0 35px #ed91c52b;
 }
 .score-number{font-family:"Playfair Display",serif;font-size:39px;color:var(--light)}
 .score-label{font-size:11px;color:var(--muted)}
@@ -76,14 +96,25 @@ h2{font-family:"Playfair Display",serif;font-size:22px;font-weight:500;margin-to
 .review-item{padding:15px;margin:12px 0;border:1px solid var(--border);border-radius:13px;background:#ffffff05}
 .review-item h3{font-size:14px;line-height:1.6;margin:0 0 10px}
 .review-item p{font-size:12px;line-height:1.7;margin:4px 0;color:var(--muted);overflow-wrap:anywhere}
-.good{color:#9ce8c0!important}.bad{color:#ff9eae!important}
+.good{color:#9ce8c0!important}
+.bad{color:#ff9eae!important}
+.notice{
+  border:1px solid var(--border);border-radius:14px;
+  padding:15px;background:#ffffff06;color:var(--light);
+  font-size:13px;line-height:1.7;text-align:center;
+}
 .footer{text-align:center;color:#a991a6;font-size:10px;letter-spacing:2px;margin-top:30px}
-@media(max-width:480px){body{padding:20px 12px 30px}.card{padding:16px}.question-card{padding:15px}}
+@media(max-width:480px){
+  body{padding:20px 12px 30px}
+  .card{padding:16px}
+  .question-card{padding:15px}
+}
 </style>
 </head>
 
 <body>
 <main class="container">
+
 <header>
   <div class="small">♡ SUBA CREATION ❤️</div>
   <h1>A Journey For Two</h1>
@@ -92,45 +123,75 @@ h2{font-family:"Playfair Display",serif;font-size:22px;font-weight:500;margin-to
 
 <section class="card">
   <h2 id="phaseTitle">Welcome 💗</h2>
-  <p class="subtitle" id="instructions">A little journey to understand each other better.</p>
+  <p class="subtitle" id="instructions">
+    Discover each other's favourites, one question at a time.
+  </p>
+
   <div class="steps">
     <div class="step active" id="step1">1 · My Favourite</div>
     <div class="step" id="step2">2 · Partner's Favourite</div>
     <div class="step" id="step3">3 · Guess</div>
   </div>
+
   <p class="status" id="status">Connecting to your room...</p>
-  <div class="timer" id="timer"></div>
 </section>
 
 <section id="gameArea" class="card hidden">
   <p class="progress" id="progress"></p>
+
   <form id="answerForm">
     <div id="questions"></div>
-    <button type="button" class="main-btn secondary hidden" id="backBtn">← Previous</button>
-    <button type="button" class="main-btn" id="nextBtn">Next Question →</button>
-    <button type="submit" class="main-btn hidden" id="submitBtn">Save My Favourites ❤️</button>
+
+    <button type="button" class="main-btn secondary hidden" id="backBtn">
+      ← Previous Question
+    </button>
+
+    <button type="button" class="main-btn" id="nextBtn">
+      Next Question →
+    </button>
+
+    <button type="submit" class="main-btn hidden" id="submitBtn">
+      Save My Favourites ❤️
+    </button>
   </form>
 </section>
 
 <section id="result" class="card hidden">
   <div style="text-align:center">
     <div class="small">YOUR JOURNEY TOGETHER</div>
-    <h2 style="font-size:30px">Our Level 1 Result 💕</h2>
-    <p class="subtitle">Every right answer helps you understand each other better.</p>
+    <h2 style="font-size:30px">Your Level 1 Result 💕</h2>
+    <p class="subtitle">Every answer is a chance to understand each other better.</p>
+
     <div class="score-circle">
       <div class="score-number" id="scorePercent">0%</div>
       <div class="score-label">YOUR GUESS SCORE</div>
     </div>
   </div>
+
   <div class="stats">
-    <div class="stat"><strong id="correctCount">0</strong><span>Correct ❤️</span></div>
-    <div class="stat"><strong id="wrongCount">0</strong><span>Wrong 💗</span></div>
+    <div class="stat">
+      <strong id="correctCount">0</strong>
+      <span>Correct ❤️</span>
+    </div>
+    <div class="stat">
+      <strong id="wrongCount">0</strong>
+      <span>Wrong 💗</span>
+    </div>
   </div>
+
+  <h2 id="resultHeading" style="text-align:center">Keep Growing Together 💗</h2>
   <p id="resultMessage" class="subtitle" style="text-align:center"></p>
+
   <h2>Answer Review 💌</h2>
   <div id="review"></div>
-  <p class="subtitle">Level 1 contributes up to 25% to your overall game score.</p>
-  <button type="button" class="main-btn" onclick="location.href='level2.html'">Continue to Level 2 →</button>
+
+  <p class="subtitle">
+    Level 1 contributes up to 25% to your overall game score.
+  </p>
+
+  <button type="button" class="main-btn" id="level2Btn">
+    Continue to Level 2 →
+  </button>
 </section>
 
 <footer class="footer">MADE WITH LOVE · SUBA CREATION</footer>
@@ -138,7 +199,7 @@ h2{font-family:"Playfair Display",serif;font-size:22px;font-weight:500;margin-to
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyD60gF88SJDOSopSox5mNVvmdOiy9aMKCg",
+  apiKey: "AIzaSyD60F88SJDOSopSox5mNVvmdOiy9aMKCg",
   authDomain: "partner-s-chemestry.firebaseapp.com",
   databaseURL: "https://partner-s-chemestry-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "partner-s-chemestry",
@@ -149,38 +210,74 @@ const firebaseConfig = {
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const db = firebase.database();
 
 const questions = [
- {q:"What makes me feel happy?",options:["Spending time together","Receiving gifts","Being appreciated","Having peaceful time"]},
- {q:"When I feel sad, what do I need most?",options:["Someone to listen","A hug","Some time alone","Words of comfort"]},
- {q:"What is my dream date?",options:["A long walk together","A candlelight dinner","Watching a movie","A peaceful trip"]},
- {q:"What matters most to me in a relationship?",options:["Trust","Love and affection","Honest communication","Loyalty"]},
- {q:"What makes me feel loved the most?",options:["Quality time","Sweet words","Small thoughtful acts","Physical affection"]},
- {q:"When I am upset, how do I usually react?",options:["I become quiet","I talk about it","I need some space","I show my feelings"]},
- {q:"What kind of gift would make me happiest?",options:["A handwritten letter","Something I wanted","A surprise outing","A meaningful handmade gift"]},
- {q:"What would I choose for a perfect weekend?",options:["Staying home together","Going somewhere new","Meeting friends","Relaxing peacefully"]},
- {q:"What do I value most in a partner?",options:["Understanding","Support","Honesty","Consistency"]},
- {q:"What do I want most for our future?",options:["A peaceful life together","Achieving dreams together","A loving family","Travelling together"]}
+  {
+    q:"What is your favourite way to spend time with your partner?",
+    options:["Going for a walk 🌷","Talking for hours 💬","Watching a movie 🎬","Going on a trip ✈️"]
+  },
+  {
+    q:"What is your favourite type of gift?",
+    options:["A handwritten letter 💌","Chocolates 🍫","Flowers 💐","A surprise gift 🎁"]
+  },
+  {
+    q:"What is your favourite romantic moment?",
+    options:["Holding hands 🤝","A long hug 🫂","Talking under the stars 🌙","Receiving sweet messages 💖"]
+  },
+  {
+    q:"What is your favourite food?",
+    options:["Pizza 🍕","Biryani 🍛","Ice cream 🍨","Dosa 🥞"]
+  },
+  {
+    q:"What is your favourite date idea?",
+    options:["Candlelight dinner 🕯️","Beach walk 🌊","Watching a movie 🎥","A long drive 🚗"]
+  },
+  {
+    q:"What is your favourite way to receive love?",
+    options:["Sweet words 💕","Quality time 🥰","Caring actions 🤗","Surprise gifts 🎁"]
+  },
+  {
+    q:"What is your favourite time to talk with your partner?",
+    options:["Early morning 🌅","Afternoon ☀️","Evening 🌇","Late night 🌙"]
+  },
+  {
+    q:"What is your favourite place for a date?",
+    options:["Beach 🌊","Hill station ⛰️","Park or garden 🌳","A new city 🏙️"]
+  },
+  {
+    q:"What is your favourite way to celebrate a special day?",
+    options:["Romantic dinner 🍽️","Exchanging gifts 🎁","Spending the whole day together 💗","Taking photos 📸"]
+  },
+  {
+    q:"What is your favourite dream for your future together?",
+    options:["A peaceful life 🏡","Travelling the world ✈️","Building dreams together 🌟","Having a loving family 💞"]
+  }
 ];
 
 const $ = id => document.getElementById(id);
+
 const roomCode = sessionStorage.getItem("roomCode");
 const role = sessionStorage.getItem("roomRole");
-const myName = sessionStorage.getItem("yourName") || "Player";
 
-let partnerRole, roomRef, levelRef;
-let mode = "waiting";
+let partnerRole;
+let roomRef;
+let levelRef;
+
+let mode = "loading";
 let currentQuestion = 0;
 let selectedAnswers = {};
-let countdownHandle = null;
-let shownStartAt = null;
-let displayedResult = false;
-let savedAnswers = null;
-let savedGuesses = null;
+let savedAnswers = {};
+let savedGuesses = {};
+let latestLevel = {};
+let resultShown = false;
+let submissionInProgress = false;
 
-function status(message){ $("status").textContent = message; }
+function setStatus(message){
+  $("status").textContent = message;
+}
 
 function setStep(n){
   ["step1","step2","step3"].forEach((id,i)=>{
@@ -188,11 +285,19 @@ function setStep(n){
   });
 }
 
+function showGame(){
+  $("gameArea").classList.remove("hidden");
+  $("result").classList.add("hidden");
+}
+
 function renderQuestion(){
   const item = questions[currentQuestion];
-  $("questions").innerHTML = "";
+  const questionBox = $("questions");
+  questionBox.innerHTML = "";
+
   const card = document.createElement("div");
   card.className = "question-card";
+
   const title = document.createElement("h2");
   title.textContent = (currentQuestion+1)+". "+item.q;
   card.appendChild(title);
@@ -200,277 +305,368 @@ function renderQuestion(){
   item.options.forEach((option,index)=>{
     const label = document.createElement("label");
     label.className = "option";
+
     const radio = document.createElement("input");
     radio.type = "radio";
     radio.name = "currentAnswer";
     radio.value = String(index);
     radio.checked = Number(selectedAnswers[currentQuestion])===index;
     radio.required = true;
+
     radio.addEventListener("change",()=>{
       selectedAnswers[currentQuestion]=index;
-      updateNav();
+      updateNavigation();
     });
+
     const span = document.createElement("span");
     span.textContent = option;
+
     label.append(radio,span);
     card.appendChild(label);
   });
 
-  $("questions").appendChild(card);
-  $("progress").textContent = "Question "+(currentQuestion+1)+" of "+questions.length;
+  questionBox.appendChild(card);
+
+  $("progress").textContent =
+    "Question "+(currentQuestion+1)+" of "+questions.length;
+
   $("backBtn").classList.toggle("hidden",currentQuestion===0);
   $("nextBtn").classList.toggle("hidden",currentQuestion===questions.length-1);
   $("submitBtn").classList.toggle("hidden",currentQuestion!==questions.length-1);
-  updateNav();
+
+  updateNavigation();
 }
 
-function updateNav(){
-  const chosen=selectedAnswers[currentQuestion]!==undefined;
-  $("nextBtn").disabled=!chosen;
-  $("submitBtn").disabled=!chosen;
+function updateNavigation(){
+  const chosen = selectedAnswers[currentQuestion] !== undefined;
+  $("nextBtn").disabled = !chosen;
+  $("submitBtn").disabled = !chosen || submissionInProgress;
+}
+
+function beginForm(type){
+  mode = type;
+  currentQuestion = 0;
+  selectedAnswers = {};
+  submissionInProgress = false;
+
+  showGame();
+
+  if(type==="own"){
+    $("phaseTitle").textContent = "My Favourite 💗";
+    $("instructions").textContent =
+      "Choose your own favourite answers. Your partner cannot see your selections.";
+    $("submitBtn").textContent = "Save My Favourites ❤️";
+    setStep(role==="host"?0:1);
+  } else {
+    $("phaseTitle").textContent = "Guess Your Partner's Favourite 💕";
+    $("instructions").textContent =
+      "Guess your partner's favourite answer for each question. There is no timer!";
+    $("submitBtn").textContent = "Submit My Guesses 💖";
+    setStep(2);
+  }
+
+  renderQuestion();
 }
 
 $("backBtn").addEventListener("click",()=>{
-  if(currentQuestion>0){currentQuestion--;renderQuestion();}
+  if(currentQuestion>0){
+    currentQuestion--;
+    renderQuestion();
+  }
 });
 
 $("nextBtn").addEventListener("click",()=>{
   if(selectedAnswers[currentQuestion]===undefined){
-    status("Choose an answer before continuing ❤️");return;
+    setStatus("Please choose an answer first ❤️");
+    return;
   }
-  if(currentQuestion<questions.length-1){currentQuestion++;renderQuestion();}
+
+  if(currentQuestion<questions.length-1){
+    currentQuestion++;
+    renderQuestion();
+  }
 });
 
-function beginForm(type){
-  mode=type;
-  currentQuestion=0;
-  selectedAnswers={};
-  $("gameArea").classList.remove("hidden");
-  $("result").classList.add("hidden");
-
-  if(type==="own"){
-    $("phaseTitle").textContent=role==="host"?"My Favourite 💗":"Partner's Favourite 💜";
-    $("instructions").textContent=role==="host"
-      ?"Choose your true favourites. Your answers will stay hidden from your partner."
-      :"Now choose your own favourites. Your partner cannot see your answers.";
-    $("submitBtn").textContent="Save My Favourites ❤️";
-    setStep(role==="host"?0:1);
-  }else{
-    $("phaseTitle").textContent="Guess Your Partner ❤️";
-    $("instructions").textContent="Guess your partner's choices. Their answers stay hidden until both of you finish.";
-    $("submitBtn").textContent="Submit My Guesses 💕";
-    setStep(2);
-  }
-  renderQuestion();
-}
-
-function startSharedTimer(startAt){
-  if(!startAt || shownStartAt===startAt)return;
-  shownStartAt=startAt;
-  if(countdownHandle)clearInterval(countdownHandle);
-
-  function tick(){
-    const remaining=Math.ceil((startAt-Date.now())/1000);
-    $("timer").textContent=remaining>0
-      ?"Guessing starts in "+remaining+" seconds 💗"
-      :"Guess your partner ❤️";
-    if(remaining<=0){
-      clearInterval(countdownHandle);
-      countdownHandle=null;
-    }
-  }
-  tick();
-  countdownHandle=setInterval(tick,250);
-}
-
-function showWaiting(title,message,step){
-  mode="waiting";
+function showMessage(title,message,step){
+  mode = "complete";
   $("gameArea").classList.add("hidden");
-  $("phaseTitle").textContent=title;
-  $("instructions").textContent=message;
+  $("result").classList.add("hidden");
+  $("phaseTitle").textContent = title;
+  $("instructions").textContent = message;
   setStep(step);
 }
 
-function displayResults(level){
-  const answers=level.answers||{};
-  const guesses=level.guesses||{};
-  if(!answers.host||!answers.partner||!guesses.host||!guesses.partner)return;
-  if(displayedResult)return;
-  displayedResult=true;
-  mode="result";
+function showResult(level){
+  const answers = level.answers || {};
+  const guesses = level.guesses || {};
+
+  if(!answers.host || !answers.partner ||
+     !guesses.host || !guesses.partner) return;
+
+  if(resultShown) return;
+
+  const myGuesses = guesses[role];
+  const partnerAnswers = answers[partnerRole];
+
+  if(!myGuesses || !partnerAnswers) return;
+
+  resultShown = true;
+  mode = "result";
+
   $("gameArea").classList.add("hidden");
   $("result").classList.remove("hidden");
-  $("timer").textContent="";
 
-  let correct=0;
-  $("review").innerHTML="";
-  const partnerAnswers=answers[partnerRole];
-  const myGuesses=guesses[role];
+  let correct = 0;
+  $("review").innerHTML = "";
 
   questions.forEach((item,i)=>{
-    const isCorrect=Number(myGuesses[i])===Number(partnerAnswers[i]);
-    if(isCorrect)correct++;
+    const guess = Number(myGuesses[i]);
+    const actual = Number(partnerAnswers[i]);
+    const isCorrect = guess === actual;
 
-    const box=document.createElement("div");
-    box.className="review-item";
-    const title=document.createElement("h3");
-    title.textContent=(i+1)+". "+item.q;
-    const yourGuess=document.createElement("p");
-    yourGuess.textContent="Your guess: "+item.options[Number(myGuesses[i])];
-    const actual=document.createElement("p");
-    actual.textContent="Partner's answer: "+item.options[Number(partnerAnswers[i])];
-    actual.className=isCorrect?"good":"bad";
-    const result=document.createElement("p");
-    result.className=isCorrect?"good":"bad";
-    result.textContent=isCorrect?"Correct! ❤️":"Wrong — now you know more about each other 💗";
-    box.append(title,yourGuess,actual,result);
+    if(isCorrect) correct++;
+
+    const box = document.createElement("div");
+    box.className = "review-item";
+
+    const title = document.createElement("h3");
+    title.textContent = (i+1)+". "+item.q;
+
+    const yourGuess = document.createElement("p");
+    yourGuess.textContent = "Your guess: "+item.options[guess];
+
+    const partnerAnswer = document.createElement("p");
+    partnerAnswer.textContent = "Partner's favourite: "+item.options[actual];
+    partnerAnswer.className = isCorrect ? "good" : "bad";
+
+    const result = document.createElement("p");
+    result.className = isCorrect ? "good" : "bad";
+    result.textContent = isCorrect
+      ? "✅ Correct! 🥰 You know your partner!"
+      : "❌ Not quite! 💗 Now you know one more thing about your partner.";
+
+    box.append(title,yourGuess,partnerAnswer,result);
     $("review").appendChild(box);
   });
 
-  $("scorePercent").textContent=(correct*10)+"%";
-  $("correctCount").textContent=correct;
-  $("wrongCount").textContent=10-correct;
-  $("resultMessage").textContent=correct>=8
-    ?"Beautiful! You know your partner really well. Keep understanding each other. ❤️"
-    :correct>=5
-    ?"You are learning more about each other. Keep talking, caring and growing together. 💕"
-    :"Every answer is a chance to learn something new about your partner. Your journey continues. 💗";
+  const percent = correct*10;
+  $("scorePercent").textContent = percent+"%";
+  $("correctCount").textContent = correct;
+  $("wrongCount").textContent = 10-correct;
 
-  status("Both players finished Level 1. Well done! ❤️");
+  let heading;
+  let message;
+
+  if(correct<=4){
+    heading = "Keep Learning Together 💗";
+    message = "Every relationship grows through listening and understanding. Keep discovering each other! 🌱";
+  } else if(correct===5){
+    heading = "Good Try! 😊";
+    message = "You know some of your partner's favourites. Keep sharing and learning together! 💕";
+  } else if(correct<=7){
+    heading = "Better Together! 🥰";
+    message = "You know your partner quite well. Your understanding is growing! 💖";
+  } else if(correct===8){
+    heading = "Very Good! 💖";
+    message = "Wonderful! You understand many of your partner's favourites. Keep that bond strong! ✨";
+  } else if(correct===9){
+    heading = "Super! 🌟";
+    message = "Almost perfect! You know your partner's favourites really well! 💞";
+  } else {
+    heading = "FULL MARKS! 👑💖";
+    message = "10 out of 10! Amazing! 🥳 Keep loving, listening and understanding each other! 💍❤️";
+  }
+
+  $("resultHeading").textContent = heading;
+  $("resultMessage").textContent = message;
+  $("phaseTitle").textContent = "Level 1 Completed 💕";
+  $("instructions").textContent = "Your answers have been checked. Celebrate your journey together!";
+  setStep(2);
+  setStatus("Level 1 result is ready ❤️");
 }
 
 function handleRoom(data){
-  if(!data||!data.players||!data.players[role]){
-    status("Room/player details not found. Return to Connect Your Partner.");
+  if(!data || !data.players || !data.players[role]){
+    setStatus("Room details not found. Please reconnect to your room.");
     return;
   }
 
-  const partner=data.players[partnerRole];
+  const partner = data.players[partnerRole];
+
   if(!partner){
-    showWaiting("Waiting for your partner 💗","Your partner needs to connect to the same room first.",0);
-    status("Room code: "+roomCode);
+    showMessage(
+      "Your Journey Begins 💗",
+      "Your partner needs to connect to this room before you can play together.",
+      0
+    );
+    setStatus("Room code: "+roomCode);
     return;
   }
 
-  const level=data.level1||{};
-  const answers=level.answers||{};
-  const guesses=level.guesses||{};
-  savedAnswers=answers;
-  savedGuesses=guesses;
+  const level = data.level1 || {};
+  const answers = level.answers || {};
+  const guesses = level.guesses || {};
 
-  // Host chooses first; partner's turn follows after host submits.
-  if(role==="host"&&!answers.host){
-    if(mode!=="own")beginForm("own");
-    $("phaseTitle").textContent="My Favourite 💗";
-    status("Your turn first! Choose your favourite answers.");
-    return;
-  }
+  latestLevel = level;
+  savedAnswers = answers;
+  savedGuesses = guesses;
 
-  if(role==="partner"&&!answers.host){
-    showWaiting("Waiting for My Favourite 💗","Your partner is choosing their favourites first. Your turn will begin next.",1);
-    status("Waiting for "+(data.players.host.name||"your partner")+" to submit...");
-    return;
-  }
-
-  if(role==="host"&&answers.host&&!answers.partner){
-    showWaiting("Partner's Favourite 💜","Your favourites are saved! Now your partner is choosing their own answers.",1);
-    status("Waiting for your partner to submit their favourites...");
-    return;
-  }
-
-  if(role==="partner"&&answers.host&&!answers.partner){
-    if(mode!=="own")beginForm("own");
-    $("phaseTitle").textContent="Partner's Favourite 💜";
-    $("instructions").textContent="Now choose your true favourites. Your partner's answers remain private.";
-    setStep(1);
-    status("Your turn! Choose your own favourite answers.");
-    return;
-  }
-
-  if(answers.host&&answers.partner){
-    if(!level.startAt){
-      levelRef.child("startAt").transaction(current=>{
-        return current===null?Date.now()+5000:current;
-      });
+  // Phase 1: host saves their own favourites first.
+  if(!answers.host){
+    if(role==="host"){
+      if(mode!=="own") beginForm("own");
+      $("phaseTitle").textContent = "My Favourite 💗";
+      setStatus("Choose your own 10 favourite answers.");
+    } else {
+      showMessage(
+        "My Favourite 💗",
+        "Your partner will choose their favourites first. Your turn will open automatically after their answers are saved.",
+        0
+      );
+      setStatus("Your game is ready ❤️");
     }
+    return;
+  }
 
-    if(level.startAt)startSharedTimer(level.startAt);
+  // Phase 2: partner saves their own favourites.
+  if(!answers.partner){
+    if(role==="partner"){
+      if(mode!=="own") beginForm("own");
+      $("phaseTitle").textContent = "Partner's Favourite 💜";
+      $("instructions").textContent =
+        "Choose your own favourite answers. Your partner will not see them.";
+      setStep(1);
+      setStatus("Your turn! Choose your 10 favourites.");
+    } else {
+      showMessage(
+        "Partner's Favourite 💜",
+        "Your favourites are saved. You can continue once your partner has saved theirs.",
+        1
+      );
+      setStatus("Your game is ready ❤️");
+    }
+    return;
+  }
 
+  // Phase 3: both players can guess independently.
+  if(answers.host && answers.partner){
     if(!guesses[role]){
-      if(mode!=="guess")beginForm("guess");
-      status("Both favourites are saved! Guess your partner's answers ❤️");
-    }else if(!guesses[partnerRole]){
-      showWaiting("Your guesses are saved 💕","Waiting for your partner to finish guessing. Your result will appear when both are done.",2);
-      status("Your answers are saved securely.");
+      if(mode!=="guess") beginForm("guess");
+      setStatus("Both favourite lists are saved. Guess your partner's answers! 💕");
+      return;
     }
 
-    displayResults(level);
+    // No waiting screen. Keep a calm submission confirmation
+    // until the second player's guesses are saved.
+    if(!guesses[partnerRole]){
+      showMessage(
+        "Your Guesses Are Saved 💖",
+        "Your answers are saved safely. Your result will appear automatically when both players have submitted.",
+        2
+      );
+      setStatus("Submission saved successfully ❤️");
+      return;
+    }
+
+    showResult(level);
   }
 }
 
 $("answerForm").addEventListener("submit",async event=>{
   event.preventDefault();
-  if(!levelRef||!savedAnswers)return;
+
+  if(!levelRef || submissionInProgress) return;
 
   if(Object.keys(selectedAnswers).length!==questions.length){
-    status("Please answer all 10 questions first.");
+    setStatus("Please answer all 10 questions first ❤️");
     return;
   }
 
-  $("submitBtn").disabled=true;
+  submissionInProgress = true;
+  $("submitBtn").disabled = true;
+
+  const answersToSave = {};
+  for(let i=0;i<questions.length;i++){
+    if(selectedAnswers[i]===undefined){
+      submissionInProgress = false;
+      $("submitBtn").disabled = false;
+      setStatus("Please answer all 10 questions first ❤️");
+      return;
+    }
+    answersToSave[i] = selectedAnswers[i];
+  }
+
   try{
     if(mode==="own"){
-      // Save this player's own favourites.
-      await levelRef.child("answers/"+role).set(selectedAnswers);
-      selectedAnswers={};
-      status("Your favourites are saved ❤️");
+      const playerAnswersRef = levelRef.child("answers/"+role);
+      const snapshot = await playerAnswersRef.once("value");
 
-      if(role==="host"){
-        showWaiting("Partner's Favourite 💜","Your turn is complete. Now your partner will choose their favourites.",1);
-      }else{
-        showWaiting("Favourites saved 💗","Both sets of favourites are saved. Preparing the guessing phase...",2);
+      // Avoid accidentally overwriting saved favourites.
+      if(snapshot.exists()){
+        setStatus("Your favourites were already saved ❤️");
+      } else {
+        await playerAnswersRef.set(answersToSave);
+        setStatus("Your favourites are saved successfully ❤️");
       }
-    }else if(mode==="guess"){
-      // Do not let the player overwrite guesses once submitted.
-      await levelRef.child("guesses/"+role).transaction(current=>{
-        return current===null?selectedAnswers:current;
-      });
-      showWaiting("Your guesses are saved 💕","Waiting for your partner to finish guessing.",2);
-      status("Your guesses are saved. Results will show when both finish.");
+    } else if(mode==="guess"){
+      const playerGuessesRef = levelRef.child("guesses/"+role);
+      const snapshot = await playerGuessesRef.once("value");
+
+      if(snapshot.exists()){
+        setStatus("Your guesses were already submitted 💕");
+      } else {
+        await playerGuessesRef.set(answersToSave);
+        setStatus("Your guesses are saved successfully 💖");
+      }
     }
-  }catch(error){
+
+    selectedAnswers = {};
+    $("gameArea").classList.add("hidden");
+    mode = "complete";
+
+  } catch(error){
     console.error(error);
-    status("Could not save answers: "+error.message);
-    $("submitBtn").disabled=false;
+    submissionInProgress = false;
+    $("submitBtn").disabled = false;
+    setStatus("Could not save your answers: "+error.message);
   }
 });
 
+$("level2Btn").addEventListener("click",()=>{
+  location.href = "level2.html";
+});
+
 async function init(){
-  if(!roomCode||!role||!["host","partner"].includes(role)){
-    status("Room details missing. Go back and connect to your partner first.");
+  if(!roomCode || !role || !["host","partner"].includes(role)){
+    setStatus("Room details are missing. Go back and connect to your partner first.");
     return;
   }
 
-  partnerRole=role==="host"?"partner":"host";
-  roomRef=db.ref("rooms/"+roomCode);
-  levelRef=roomRef.child("level1");
+  partnerRole = role==="host" ? "partner" : "host";
+  roomRef = db.ref("rooms/"+roomCode);
+  levelRef = roomRef.child("level1");
 
   try{
-    if(!auth.currentUser)await auth.signInAnonymously();
-    const snapshot=await roomRef.once("value");
+    if(!auth.currentUser){
+      await auth.signInAnonymously();
+    }
+
+    const snapshot = await roomRef.once("value");
+
     if(!snapshot.exists()){
-      status("Room not found. Please connect again.");
+      setStatus("Room not found. Please connect again.");
       return;
     }
 
     roomRef.on("value",snapshot=>{
       handleRoom(snapshot.val());
     },error=>{
-      status("Firebase error: "+error.message);
+      setStatus("Firebase error: "+error.message);
     });
-  }catch(error){
+
+  } catch(error){
     console.error(error);
-    status("Firebase error: "+error.message);
+    setStatus("Firebase error: "+error.message);
   }
 }
 
