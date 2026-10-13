@@ -147,6 +147,8 @@
     const continueBtn = document.getElementById("continueBtn");
 
     let currentRoomCode = "";
+    let registerRedirected = false;
+    let playersRef = null;
 
     function showMessage(message, error = false) {
       statusMessage.textContent = message;
@@ -183,6 +185,44 @@
       });
     }
 
+    // WATCH FOR BOTH PLAYERS
+    function watchForPartner(code) {
+      if (!code) return;
+
+      if (playersRef) {
+        playersRef.off();
+      }
+
+      playersRef = db.ref("rooms/" + code + "/players");
+
+      playersRef.on("value", snapshot => {
+        const players = snapshot.val();
+
+        if (
+          players &&
+          players.host &&
+          players.partner &&
+          !registerRedirected
+        ) {
+          registerRedirected = true;
+
+          showMessage(
+            "Both partners connected! Opening Register page ❤️"
+          );
+
+          setTimeout(() => {
+            window.location.href = "register.html";
+          }, 1000);
+        }
+      }, error => {
+        console.error("Partner connection listener:", error);
+        showMessage(
+          "Unable to check partner connection. Please try again.",
+          true
+        );
+      });
+    }
+
     // CREATE ROOM
     createBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
@@ -199,11 +239,13 @@
 
       try {
         const user = await ensureSignedIn();
+
         let code = "";
         let created = false;
 
         for (let attempt = 0; attempt < 5; attempt++) {
           code = generateRoomCode();
+
           const roomRef = db.ref("rooms/" + code);
 
           const result = await roomRef.transaction(current => {
@@ -229,7 +271,9 @@
         }
 
         if (!created) {
-          throw new Error("Could not create a room. Please try again.");
+          throw new Error(
+            "Could not create a room. Please try again."
+          );
         }
 
         sessionStorage.setItem("yourName", name);
@@ -237,18 +281,26 @@
         sessionStorage.setItem("roomRole", "host");
 
         showRoom(code);
-        showMessage("Room created! Share this code with your partner 💗");
+        watchForPartner(code);
+
+        showMessage(
+          "Room created! Share this code with your partner 💗"
+        );
 
       } catch (error) {
         console.error("Create room error:", error);
-        showMessage(error.message || "Room creation failed. Check Firebase.", true);
+
+        showMessage(
+          error.message || "Room creation failed. Check Firebase.",
+          true
+        );
       } finally {
         createBtn.disabled = false;
         joinBtn.disabled = false;
       }
     });
 
-    // JOIN ROOM - FIXED
+    // JOIN ROOM
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const code = roomInput.value.trim().toUpperCase();
@@ -260,7 +312,10 @@
       }
 
       if (!/^[A-Z0-9]{6}$/.test(code)) {
-        showMessage("Enter your partner's 6-character code.", true);
+        showMessage(
+          "Enter your partner's 6-character code.",
+          true
+        );
         roomInput.focus();
         return;
       }
@@ -273,24 +328,30 @@
         const user = await ensureSignedIn();
         const roomRef = db.ref("rooms/" + code);
 
-        // Confirm that the room exists and has a host.
+        // CHECK THAT THE ROOM EXISTS
         const roomSnapshot = await roomRef.once("value");
 
         if (!roomSnapshot.exists()) {
-          throw new Error("Room not found. Please check the code.");
+          throw new Error(
+            "Room not found. Please check the code."
+          );
         }
 
         const room = roomSnapshot.val();
 
         if (!room.players || !room.players.host) {
-          throw new Error("This room has no host. Create a new room.");
+          throw new Error(
+            "This room has no host. Create a new room."
+          );
         }
 
         if (room.players.host.uid === user.uid) {
-          throw new Error("Use the other phone to join this room.");
+          throw new Error(
+            "Use the other phone to join this room."
+          );
         }
 
-        // Reserve only the partner slot atomically.
+        // RESERVE THE PARTNER SLOT
         const partnerRef = roomRef.child("players/partner");
 
         const result = await partnerRef.transaction(current => {
@@ -302,7 +363,7 @@
             };
           }
 
-          // Do not allow a third player to take the slot.
+          // Prevent a third player from joining.
           if (current !== null) {
             return;
           }
@@ -315,15 +376,23 @@
         });
 
         if (!result.committed) {
-          throw new Error("This room already has two players.");
+          throw new Error(
+            "This room already has two players."
+          );
         }
 
-        // Confirm the host is still present before marking connected.
+        // CONFIRM THAT THE HOST STILL EXISTS
         const latestRoom = await roomRef.once("value");
         const latestData = latestRoom.val();
 
-        if (!latestData || !latestData.players || !latestData.players.host) {
-          throw new Error("Host room not found. Please try again.");
+        if (
+          !latestData ||
+          !latestData.players ||
+          !latestData.players.host
+        ) {
+          throw new Error(
+            "Host room not found. Please try again."
+          );
         }
 
         await roomRef.child("status").set("connected");
@@ -333,11 +402,20 @@
         sessionStorage.setItem("roomRole", "partner");
 
         showRoom(code);
-        showMessage("Connected successfully! Continue to Register ♡");
+        watchForPartner(code);
+
+        showMessage(
+          "Connected successfully! Opening Register page ❤️"
+        );
 
       } catch (error) {
         console.error("Join room error:", error);
-        showMessage(error.message || "Could not connect. Check internet and Firebase.", true);
+
+        showMessage(
+          error.message ||
+          "Could not connect. Check internet and Firebase.",
+          true
+        );
       } finally {
         joinBtn.disabled = false;
         createBtn.disabled = false;
@@ -362,70 +440,44 @@
             title: "Join my Suba Creation room",
             text: message
           });
-        } else if (navigator.clipboard && window.isSecureContext) {
+        } else if (
+          navigator.clipboard &&
+          window.isSecureContext
+        ) {
           await navigator.clipboard.writeText(message);
-          showMessage("Message copied! Send it to your partner 💌");
+          showMessage(
+            "Message copied! Send it to your partner 💌"
+          );
         } else {
-          showMessage("Share this room code with your partner: " + currentRoomCode);
+          showMessage(
+            "Share this room code with your partner: " +
+            currentRoomCode
+          );
         }
       } catch (error) {
         if (error.name !== "AbortError") {
-          showMessage("Share this code: " + currentRoomCode);
+          showMessage(
+            "Share this code: " + currentRoomCode
+          );
         }
       }
     });
 
-    // CONTINUE TO REGISTER
+    // MANUAL CONTINUE TO REGISTER
     continueBtn.addEventListener("click", () => {
       const name = sessionStorage.getItem("yourName");
       const code = sessionStorage.getItem("roomCode");
 
       if (!name || !code) {
-        showMessage("Create or join a room first.", true);
+        showMessage(
+          "Create or join a room first.",
+          true
+        );
         return;
       }
 
       window.location.href = "register.html";
     });
-
-    // AUTOMATICALLY GO TO REGISTER WHEN BOTH PLAYERS CONNECT
-    let registerRedirected = false;
-
-    function watchForPartner() {
-      const code = sessionStorage.getItem("roomCode");
-      const role = sessionStorage.getItem("roomRole");
-
-      if (!code || !role || !["host", "partner"].includes(role)) {
-        return;
-      }
-
-      db.ref("rooms/" + code + "/players").on("value", snapshot => {
-        const players = snapshot.val();
-
-        if (
-          players &&
-          players.host &&
-          players.partner &&
-          !registerRedirected
-        ) {
-          registerRedirected = true;
-
-          sessionStorage.setItem("yourName", 
-            sessionStorage.getItem("yourName") || "");
-
-          showMessage("Both partners connected! Opening Register page ❤️");
-
-          setTimeout(() => {
-            window.location.href = "register.html";
-          }, 1000);
-        }
-      }, error => {
-        console.error("Partner connection listener:", error);
-      });
-    }
-
-    // Start watching when this page loads
-    watchForPartner();
 
     // FORMAT ROOM CODE
     roomInput.addEventListener("input", () => {
@@ -434,10 +486,29 @@
         .replace(/[^A-Z0-9]/g, "");
     });
 
+    // RESUME LISTENING AFTER REFRESH
+    const savedCode = sessionStorage.getItem("roomCode");
+    const savedRole = sessionStorage.getItem("roomRole");
+
+    if (
+      savedCode &&
+      (savedRole === "host" || savedRole === "partner")
+    ) {
+      currentRoomCode = savedCode;
+      generatedCode.textContent = savedCode;
+      roomPanel.hidden = false;
+
+      watchForPartner(savedCode);
+    }
+
     // FIREBASE SIGN-IN
     auth.signInAnonymously().catch(error => {
       console.error("Firebase sign-in error:", error);
-      showMessage("Firebase sign-in failed. Check Authentication settings.", true);
+
+      showMessage(
+        "Firebase sign-in failed. Check Authentication settings.",
+        true
+      );
     });
   </script>
 </body>
