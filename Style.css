@@ -1,0 +1,828 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #170d17;
+  --card: #241522;
+  --pink: #f1a6c5;
+  --light: #fff3f8;
+  --muted: #c5afbf;
+  --gold: #e7c58d;
+  --border: rgba(241, 166, 197, 0.18);
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  padding: 20px 14px 30px;
+  background:
+    radial-gradient(ellipse at top, #47203b 0%, transparent 48%),
+    var(--bg);
+  color: var(--light);
+  font-family: 'DM Sans', sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.page {
+  width: 100%;
+  max-width: 470px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0 22px;
+}
+
+.back-link {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.brand {
+  color: var(--pink);
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+}
+
+.level-count {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.hero {
+  text-align: center;
+  padding: 22px 12px 28px;
+}
+
+.heart {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 20px;
+  border: 1px solid rgba(241, 166, 197, 0.45);
+  border-radius: 50%;
+  color: var(--pink);
+  font-size: 38px;
+  box-shadow: 0 0 35px rgba(241, 166, 197, 0.12);
+}
+
+.eyebrow,
+.card-label {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+h1 {
+  margin-top: 14px;
+  color: var(--light);
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 9vw, 46px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.subtitle {
+  max-width: 320px;
+  margin: 15px auto 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.love-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 23px 0;
+}
+
+.love-line span:not(.tiny-heart) {
+  width: 55px;
+  height: 1px;
+  background: var(--border);
+}
+
+.tiny-heart {
+  color: var(--pink);
+  font-size: 11px;
+}
+
+.level-label {
+  color: var(--pink);
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+h2 {
+  margin-top: 8px;
+  color: var(--light);
+  font-family: 'Playfair Display', serif;
+  font-size: 27px;
+  font-weight: 500;
+}
+
+.instruction-card {
+  padding: 25px 20px;
+  background: linear-gradient(145deg, #2c1929, #211320);
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.16);
+}
+
+.card-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+h3 {
+  margin: 9px 0 24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.step-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  color: var(--pink);
+  background: rgba(241, 166, 197, 0.09);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.step h4 {
+  margin: 2px 0 6px;
+  color: var(--light);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.step p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.note-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 18px;
+  background: rgba(231, 197, 141, 0.06);
+  border: 1px solid rgba(231, 197, 141, 0.18);
+  border-radius: 17px;
+}
+
+.note-heart {
+  color: var(--gold);
+  font-size: 18px;
+}
+
+.note-card p {
+  color: #ead9e3;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.8;
+}
+
+.start-section {
+  padding: 26px 0 10px;
+  text-align: center;
+}
+
+.ready-text {
+  margin-bottom: 15px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#startBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  padding: 15px 20px;
+  color: #321628;
+  background: linear-gradient(110deg, #f6c0d5, #e7c58d);
+  border: none;
+  border-radius: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 8px 28px rgba(241, 166, 197, 0.13);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+#startBtn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+}
+
+#startBtn span {
+  font-size: 19px;
+}
+
+.bottom-note {
+  margin-top: 17px;
+  color: #9c8194;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+}
+
+footer {
+  padding-top: 28px;
+  color: #80677a;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+@media (max-width: 360px) {
+  body {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .instruction-card {
+    padding: 21px 15px;
+  }
+
+  .brand {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 600px) {
+  body {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+}
+
+/* =====================================
+   SUBA CREATION - A JOURNEY FOR TWO
+   Premium Romantic Theme
+===================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --background: #190f1c;
+  --background-light: #251526;
+  --card: rgba(43, 27, 43, 0.92);
+  --pink: #f3a5c5;
+  --pink-light: #ffd6e6;
+  --rose: #bd668d;
+  --cream: #fff6f5;
+  --muted: #c7b5c5;
+  --border: rgba(243, 165, 197, 0.22);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  padding: 30px 16px;
+  font-family: "DM Sans", sans-serif;
+  color: var(--cream);
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(142, 62, 111, 0.22),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(113, 59, 101, 0.2),
+      transparent 35%
+    ),
+    var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 4px;
+}
+
+.app-screen {
+  width: 100%;
+  max-width: 510px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+
+.app-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.logo-heart {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--pink-light);
+  font-size: 30px;
+  background: rgba(243, 165, 197, 0.07);
+  box-shadow: 0 0 30px rgba(243, 165, 197, 0.08);
+}
+
+.brand-name {
+  font-family: "Playfair Display", serif;
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--cream);
+}
+
+.brand-subtitle {
+  margin-top: 7px;
+  color: var(--pink);
+  font-size: 9px;
+  letter-spacing: 4px;
+}
+
+/* HERO SECTION */
+
+.hero {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.heart-art {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 25px;
+  color: var(--pink);
+}
+
+.heart-art span {
+  font-size: 29px;
+  opacity: 0.75;
+  animation: floatHeart 3s ease-in-out infinite;
+}
+
+.heart-art strong {
+  font-size: 48px;
+  color: var(--pink-light);
+  text-shadow: 0 0 28px rgba(243, 165, 197, 0.3);
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+.eyebrow {
+  margin-bottom: 15px;
+  color: var(--pink);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+
+.hero h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(36px, 8vw, 49px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+
+.hero h1 span {
+  color: var(--pink);
+  font-style: italic;
+}
+
+.hero-text {
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.love-line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 25px;
+  color: var(--pink-light);
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+
+.love-line span {
+  width: 42px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--rose)
+  );
+}
+
+.love-line span:last-child {
+  transform: rotate(180deg);
+}
+
+/* CONNECT CARD */
+
+.connect-card {
+  padding: 30px 25px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.card-heading {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.mini-heart {
+  margin-bottom: 8px;
+  color: var(--pink);
+  font-size: 27px;
+}
+
+.card-heading h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.card-heading p {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* LABELS AND INPUTS */
+
+.connect-card label {
+  display: block;
+  margin: 20px 0 10px;
+  color: var(--pink-light);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+}
+
+.connect-card input {
+  width: 100%;
+  min-height: 51px;
+  padding: 14px 16px;
+  border: 1px solid rgba(243, 165, 197, 0.2);
+  border-radius: 12px;
+  outline: none;
+  color: var(--cream);
+  background: rgba(15, 9, 17, 0.55);
+  font-size: 14px;
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    background 0.25s;
+}
+
+.connect-card input::placeholder {
+  color: #958394;
+}
+
+.connect-card input:focus {
+  border-color: var(--pink);
+  background: rgba(15, 9, 17, 0.8);
+  box-shadow: 0 0 0 3px rgba(243, 165, 197, 0.08);
+}
+
+#roomCode {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+/* BUTTONS */
+
+.btn {
+  width: 100%;
+  min-height: 51px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 17px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.btn-primary {
+  color: #291522;
+  background: linear-gradient(
+    135deg,
+    #ffd6e6,
+    #ed9fc1
+  );
+  box-shadow: 0 7px 24px rgba(189, 102, 141, 0.15);
+}
+
+.btn-secondary {
+  color: var(--pink-light);
+  border-color: rgba(243, 165, 197, 0.3);
+  background: rgba(243, 165, 197, 0.06);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 10px 30px rgba(189, 102, 141, 0.28);
+  background: linear-gradient(
+    135deg,
+    #ffe5ee,
+    #f3a5c5
+  );
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--pink);
+  background: rgba(243, 165, 197, 0.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.arrow {
+  font-size: 18px;
+}
+
+/* DIVIDER */
+
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 27px 0 7px;
+  color: #b8a3b6;
+  font-size: 9px;
+  letter-spacing: 1.7px;
+  white-space: nowrap;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ROOM PANEL */
+
+.room-panel {
+  margin-top: 26px;
+  padding: 22px 18px;
+  border: 1px solid rgba(243, 165, 197, 0.28);
+  border-radius: 18px;
+  text-align: center;
+  background: rgba(243, 165, 197, 0.055);
+  animation: fadeIn 0.4s ease;
+}
+
+.room-panel[hidden] {
+  display: none !important;
+}
+
+.room-label {
+  color: var(--pink);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+
+.generated-code {
+  margin: 14px 0;
+  color: var(--pink-light);
+  font-family: "DM Sans", sans-serif;
+  font-size: clamp(32px, 9vw, 42px);
+  font-weight: 700;
+  letter-spacing: 8px;
+  overflow-wrap: anywhere;
+  text-shadow: 0 0 25px rgba(243, 165, 197, 0.18);
+}
+
+.room-description {
+  margin: 10px 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* STATUS MESSAGE */
+
+.status {
+  min-height: 20px;
+  margin-top: 18px;
+  color: var(--pink-light);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.status.error {
+  color: #ff9baf;
+}
+
+/* FOOTER */
+
+.app-footer {
+  padding: 28px 10px 10px;
+  text-align: center;
+}
+
+.app-footer p {
+  color: #d6c1d2;
+  font-size: 11px;
+}
+
+.app-footer p span {
+  color: var(--pink);
+}
+
+.app-footer small {
+  display: block;
+  margin-top: 8px;
+  color: #907d90;
+  font-size: 10px;
+}
+
+/* ANIMATIONS */
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes floatHeart {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 480px) {
+  body {
+    padding: 22px 13px;
+  }
+
+  .app-header {
+    margin-bottom: 29px;
+  }
+
+  .brand-name {
+    font-size: 25px;
+  }
+
+  .hero {
+    margin-bottom: 27px;
+  }
+
+  .hero h1 {
+    font-size: 37px;
+  }
+
+  .connect-card {
+    padding: 25px 18px;
+    border-radius: 20px;
+  }
+
+  .card-heading h2 {
+    font-size: 23px;
+  }
+
+  .generated-code {
+    letter-spacing: 5px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
